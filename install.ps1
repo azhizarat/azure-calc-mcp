@@ -5,7 +5,7 @@
     Downloads the precompiled Go binary for your architecture (or uses local build),
     places it in %LOCALAPPDATA%\azure-calc-mcp, and configures Claude Desktop and Cursor.
 .EXAMPLE
-    irm https://raw.githubusercontent.com/kandiesky/azure-calc-mcp/main/install.ps1 | iex
+    irm https://raw.githubusercontent.com/azhizarat/azure-calc-mcp/main/install.ps1 | iex
 #>
 
 [CmdletBinding()]
@@ -46,9 +46,9 @@ if (Test-Path $localExe) {
 } else {
     Write-Host "[2/4] Downloading latest release from GitHub..." -ForegroundColor Green
     $downloadUrl = if ($Version -eq "latest") {
-        "https://github.com/kandiesky/azure-calc-mcp/releases/latest/download/azure-calc-mcp-windows-$arch.exe"
+        "https://github.com/azhizarat/azure-calc-mcp/releases/latest/download/azure-calc-mcp-windows-$arch.exe"
     } else {
-        "https://github.com/kandiesky/azure-calc-mcp/releases/download/$Version/azure-calc-mcp-windows-$arch.exe"
+        "https://github.com/azhizarat/azure-calc-mcp/releases/download/$Version/azure-calc-mcp-windows-$arch.exe"
     }
     
     try {
@@ -56,7 +56,7 @@ if (Test-Path $localExe) {
     } catch {
         # Fallback to general windows-amd64 if specific architecture fails
         Write-Warning "Could not download $downloadUrl. Falling back to default binary release..."
-        $fallbackUrl = "https://github.com/kandiesky/azure-calc-mcp/releases/latest/download/azure-calc-mcp.exe"
+        $fallbackUrl = "https://github.com/azhizarat/azure-calc-mcp/releases/latest/download/azure-calc-mcp.exe"
         Invoke-WebRequest -Uri $fallbackUrl -OutFile $exePath -UseBasicParsing
     }
 }

@@ -77,12 +77,12 @@ Execute um único comando no terminal. Ele baixa o binário nativo para a sua ar
 
 **Windows (PowerShell):**
 ```powershell
-irm https://raw.githubusercontent.com/kandiesky/azure-calc-mcp/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/azhizarat/azure-calc-mcp/main/install.ps1 | iex
 ```
 
 **macOS / Linux (Bash):**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/kandiesky/azure-calc-mcp/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/azhizarat/azure-calc-mcp/main/install.sh | bash
 ```
 
 ---
@@ -110,7 +110,7 @@ Ou configurar o Claude Desktop diretamente com `npx` sem baixar binários manual
 
 ### Método 3: Configuração Manual (Binário Pré-compilado)
 
-Baixe o executável correspondente ao seu sistema operacional nas [Releases do GitHub](https://github.com/kandiesky/azure-calc-mcp/releases) e configure o seu assistente:
+Baixe o executável correspondente ao seu sistema operacional nas [Releases do GitHub](https://github.com/azhizarat/azure-calc-mcp/releases) e configure o seu assistente:
 
 **Claude Desktop:**
 - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
@@ -137,7 +137,7 @@ Nas configurações do Cursor -> **Features** -> **MCP Servers** -> **Add New MC
 
 ### Método 4: Compilar a partir do Código Fonte
 ```bash
-git clone https://github.com/kandiesky/azure-calc-mcp.git
+git clone https://github.com/azhizarat/azure-calc-mcp.git
 cd azure-calc-mcp
 go build -o azure-calc-mcp.exe main.go
 ```

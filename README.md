@@ -77,12 +77,12 @@ Run a single command in your terminal. It downloads the native binary, installs 
 
 **Windows (PowerShell):**
 ```powershell
-irm https://raw.githubusercontent.com/kandiesky/azure-calc-mcp/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/azhizarat/azure-calc-mcp/main/install.ps1 | iex
 ```
 
 **macOS / Linux (Bash):**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/kandiesky/azure-calc-mcp/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/azhizarat/azure-calc-mcp/main/install.sh | bash
 ```
 
 ---
@@ -110,7 +110,7 @@ Or configure Claude Desktop directly using `npx` without manual downloads:
 
 ### Method 3: Manual Configuration (Precompiled Binary)
 
-Download the binary from [GitHub Releases](https://github.com/kandiesky/azure-calc-mcp/releases) and add it to your AI tool configuration:
+Download the binary from [GitHub Releases](https://github.com/azhizarat/azure-calc-mcp/releases) and add it to your AI tool configuration:
 
 **Claude Desktop:**
 - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
@@ -137,7 +137,7 @@ In Cursor Settings -> **Features** -> **MCP Servers** -> **Add New MCP Server**:
 
 ### Method 4: Build from Source
 ```bash
-git clone https://github.com/kandiesky/azure-calc-mcp.git
+git clone https://github.com/azhizarat/azure-calc-mcp.git
 cd azure-calc-mcp
 go build -o azure-calc-mcp.exe main.go
 ```

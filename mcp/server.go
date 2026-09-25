@@ -123,7 +123,7 @@ func (s *Server) handleInitialize(req *JSONRPCRequest) {
 		},
 		"serverInfo": map[string]interface{}{
 			"name":    "azure-calc-mcp",
-			"version": "0.1.2",
+			"version": "0.1.3",
 		},
 	}
 	s.sendResult(req.ID, res)

@@ -11,7 +11,7 @@ const os = require('os');
 const { spawn } = require('child_process');
 const https = require('https');
 
-const REPO = 'kandiesky/azure-calc-mcp';
+const REPO = 'azhizarat/azure-calc-mcp';
 
 // 1. Resolve Platform and Arch
 function getPlatformInfo() {

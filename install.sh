@@ -5,7 +5,7 @@ set -e
 #   Azure Pricing Calculator MCP Server - Installer (macOS/Linux)
 # ==========================================================
 
-REPO="kandiesky/azure-calc-mcp"
+REPO="azhizarat/azure-calc-mcp"
 VERSION="${1:-latest}"
 
 echo "=========================================================="

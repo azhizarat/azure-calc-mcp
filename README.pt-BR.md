@@ -1,7 +1,7 @@
-# Servidor MCP para Calculadora de Preços do Azure ⚡
+# Servidor MCP para Calculadora de Preços do Azure
 
 <p align="center">
-  <strong>[🇺🇸 English](README.md) | [🇧🇷 Português](README.pt-BR.md)</strong>
+  <a href="README.md"><b>English</b></a> &nbsp;|&nbsp; <a href="README.pt-BR.md"><b>Português</b></a>
 </p>
 
 <p align="center">
@@ -15,7 +15,7 @@ Servidor **Model Context Protocol (MCP)** de binário único de alta performance
 
 ---
 
-## 🌟 Principais Destaques e Descobertas Técnicas
+## Principais Destaques e Descobertas Técnicas
 
 1. **Cobertura Universal (Mais de 200 Serviços do Azure):**
    - **Nível 1 (Instantâneo 0ms):** Os 22 principais serviços corporativos já vêm pré-compilados com seus schemas oficiais embutidos no binário (AKS, PostgreSQL Flexible, MySQL, Cosmos DB, Azure OpenAI / Cognitive Services, Container Apps, App Service, Functions, Storage GPv2, Key Vault, Azure Monitor, Application Gateway, VPN Gateway, Azure Firewall, Bastion, Redis, Service Bus, Event Hubs, APIM, DNS, VMs e Azure SQL).
@@ -31,7 +31,7 @@ Servidor **Model Context Protocol (MCP)** de binário único de alta performance
 
 ---
 
-## 📐 Arquitetura e Como Funciona
+## Arquitetura e Como Funciona
 
 ```mermaid
 sequenceDiagram
@@ -69,7 +69,7 @@ sequenceDiagram
 
 ---
 
-## 🚀 Instalação e Configuração
+## Instalação e Configuração
 
 ### 1. Claude Desktop
 Adicione o servidor no arquivo de configuração do Claude Desktop:
@@ -87,7 +87,7 @@ Adicione o servidor no arquivo de configuração do Claude Desktop:
 ```
 
 ### 2. Cursor / Codex
-Nas configurações do Cursor ➔ **Features** ➔ **MCP Servers** ➔ **Add New MCP Server**:
+Nas configurações do Cursor -> **Features** -> **MCP Servers** -> **Add New MCP Server**:
 - **Name:** `azure-calc`
 - **Type:** `command`
 - **Command:** `C:\caminho\para\azure-calc-mcp.exe`
@@ -101,7 +101,7 @@ go build -o azure-calc-mcp.exe main.go
 
 ---
 
-## 🛠️ Referência das Ferramentas MCP
+## Referência das Ferramentas MCP
 
 ### `create_azure_estimate`
 Gera o link oficial compartilhável da Calculadora de Preços do Azure.
@@ -131,7 +131,7 @@ Retorna todos os serviços enterprise com schemas pré-compilados e explica como
 
 ---
 
-## 💬 Exemplo de Prompt para o Assistente
+## Exemplo de Prompt para o Assistente
 
 Você pode pedir para a sua IA em linguagem natural:
 
@@ -145,7 +145,7 @@ Você pode pedir para a sua IA em linguagem natural:
 
 ---
 
-## 🧪 Desenvolvimento Orientado a Testes (TDD)
+## Desenvolvimento Orientado a Testes (TDD)
 
 Execute a suíte de testes automatizados:
 ```powershell
@@ -192,6 +192,6 @@ ok      azure-calc-mcp/mcp      0.065s
 
 ---
 
-## 📄 Licença
+## Licença
 
 Licença MIT. Criado para automação e padronização de arquiteturas de nuvem em escala corporativa.

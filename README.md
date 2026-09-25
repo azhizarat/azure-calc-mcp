@@ -1,7 +1,7 @@
-# Azure Pricing Calculator MCP Server ⚡
+# Azure Pricing Calculator MCP Server
 
 <p align="center">
-  <strong>[🇺🇸 English](README.md) | [🇧🇷 Português](README.pt-BR.md)</strong>
+  <a href="README.md"><b>English</b></a> &nbsp;|&nbsp; <a href="README.pt-BR.md"><b>Português</b></a>
 </p>
 
 <p align="center">
@@ -15,7 +15,7 @@ A high-performance, single-binary **Model Context Protocol (MCP)** server writte
 
 ---
 
-## 🌟 Key Highlights & Engineering Breakthroughs
+## Key Highlights & Engineering Breakthroughs
 
 1. **Universal Coverage (200+ Azure Services):**
    - **Tier 1 (Instant 0ms):** Top 22 enterprise services pre-compiled with embedded official schemas (AKS, PostgreSQL Flexible, MySQL, Cosmos DB, Azure OpenAI / Cognitive Services, Container Apps, App Service, Functions, Storage GPv2, Key Vault, Azure Monitor, Application Gateway, VPN Gateway, Azure Firewall, Bastion, Redis, Service Bus, Event Hubs, APIM, DNS, VMs, and Azure SQL).
@@ -31,7 +31,7 @@ A high-performance, single-binary **Model Context Protocol (MCP)** server writte
 
 ---
 
-## 📐 Architecture & How It Works
+## Architecture & How It Works
 
 ```mermaid
 sequenceDiagram
@@ -69,7 +69,7 @@ sequenceDiagram
 
 ---
 
-## 🚀 Quick Start & Installation
+## Quick Start & Installation
 
 ### 1. Claude Desktop
 Add the server to your Claude Desktop configuration file:
@@ -87,7 +87,7 @@ Add the server to your Claude Desktop configuration file:
 ```
 
 ### 2. Cursor / Codex
-In Cursor Settings ➔ **Features** ➔ **MCP Servers** ➔ **Add New MCP Server**:
+In Cursor Settings -> **Features** -> **MCP Servers** -> **Add New MCP Server**:
 - **Name:** `azure-calc`
 - **Type:** `command`
 - **Command:** `C:\path\to\azure-calc-mcp.exe`
@@ -101,7 +101,7 @@ go build -o azure-calc-mcp.exe main.go
 
 ---
 
-## 🛠️ MCP Tools Reference
+## MCP Tools Reference
 
 ### `create_azure_estimate`
 Generates an official Azure Pricing Calculator share link.
@@ -131,7 +131,7 @@ Returns all pre-compiled enterprise services and describes how to target any of 
 
 ---
 
-## 💬 Example Prompt for AI Assistants
+## Example Prompt for AI Assistants
 
 You can prompt your AI in natural language:
 
@@ -145,7 +145,7 @@ You can prompt your AI in natural language:
 
 ---
 
-## 🧪 Test-Driven Development (TDD)
+## Test-Driven Development (TDD)
 
 Run the automated test suite:
 ```powershell
@@ -192,6 +192,6 @@ ok      azure-calc-mcp/mcp      0.065s
 
 ---
 
-## 📄 License
+## License
 
 MIT License. Developed for enterprise-wide cloud architecture automation.

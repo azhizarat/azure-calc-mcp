@@ -11,6 +11,14 @@ import (
 )
 
 func main() {
+	// Check if install command is requested
+	for _, arg := range os.Args[1:] {
+		if arg == "install" || arg == "--install" || arg == "-install" {
+			runSelfInstall()
+			return
+		}
+	}
+
 	cliMode := flag.Bool("cli", false, "Executa em modo linha de comando (CLI) em vez de servidor MCP")
 	testMode := flag.Bool("test", false, "Gera uma estimativa de teste rápida")
 	inputFile := flag.String("file", "", "Caminho para arquivo JSON de especificação de arquitetura")

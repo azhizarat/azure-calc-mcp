@@ -176,18 +176,37 @@ async function runInstaller() {
   const cursorDir = path.dirname(getCursorConfigPath());
   if (fs.existsSync(cursorDir)) {
     const cursorPath = getCursorConfigPath();
-    updateConfigFile(cursorPath, {
-      command: binaryPath
-    });
-    console.log(`[3/3] Cursor configured: ${cursorPath}`);
-  } else {
-    console.log('[3/3] Cursor directory not detected. You can add it in Cursor Settings.');
+    updateConfigFile(cursorPath, { command: binaryPath });
+    console.log(`[3/4] Cursor configured: ${cursorPath}`);
+  }
+
+  // Windsurf
+  const windsurfDir = path.join(os.homedir(), '.codeium', 'windsurf');
+  if (fs.existsSync(windsurfDir)) {
+    const windsurfConfig = path.join(windsurfDir, 'mcp_config.json');
+    updateConfigFile(windsurfConfig, { command: binaryPath });
+    console.log(`[+] Windsurf configured: ${windsurfConfig}`);
+  }
+
+  // VS Code Cline & Roo Code
+  const appData = process.env.APPDATA || path.join(os.homedir(), '.config');
+  const clinePath = path.join(appData, 'Code', 'User', 'globalStorage', 'saoudrizwan.claude-dev', 'settings', 'cline_mcp_settings.json');
+  const rooPath = path.join(appData, 'Code', 'User', 'globalStorage', 'rooveterinaryinc.roo-cline', 'settings', 'cline_mcp_settings.json');
+  
+  if (fs.existsSync(path.dirname(clinePath))) {
+    updateConfigFile(clinePath, { command: binaryPath });
+    console.log(`[+] VS Code Cline configured: ${clinePath}`);
+  }
+  if (fs.existsSync(path.dirname(rooPath))) {
+    updateConfigFile(rooPath, { command: binaryPath });
+    console.log(`[+] VS Code Roo Code configured: ${rooPath}`);
   }
 
   console.log('');
   console.log('==========================================================');
   console.log('  Installation completed successfully!');
-  console.log('  Restart Claude Desktop or Cursor to start using.');
+  console.log('  Compatible with Claude Desktop, Cursor, Windsurf, VS Code (Copilot/Cline), etc.');
+  console.log('  Restart your AI tool to start using.');
   console.log('==========================================================');
 }
 

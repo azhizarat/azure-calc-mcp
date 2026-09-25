@@ -105,11 +105,12 @@ $jsonOut = $claudeConfig | ConvertTo-Json -Depth 10
 Set-Content -Path $claudeConfigFile -Value $jsonOut -Encoding UTF8
 Write-Host "      Configured: $claudeConfigFile" -ForegroundColor Gray
 
-# 5. Auto-Configure Cursor (if installed or directory exists)
-Write-Host "[4/4] Checking Cursor / Codex..." -ForegroundColor Green
+# 5. Auto-Configure Other MCP Clients (Cursor, Windsurf, Cline, Roo Code)
+Write-Host "[4/4] Checking other AI clients (Cursor, Windsurf, VS Code Cline/Roo Code)..." -ForegroundColor Green
+
+# Cursor
 $cursorDir = Join-Path $env:USERPROFILE ".cursor"
 $cursorConfigFile = Join-Path $cursorDir "mcp.json"
-
 if (Test-Path $cursorDir) {
     $cursorConfig = @{ mcpServers = @{} }
     if (Test-Path $cursorConfigFile) {
@@ -121,17 +122,59 @@ if (Test-Path $cursorDir) {
                     $cursorConfig["mcpServers"] = @{}
                 }
             }
-        } catch {
-            $cursorConfig = @{ mcpServers = @{} }
-        }
+        } catch { $cursorConfig = @{ mcpServers = @{} } }
     }
-    $cursorConfig["mcpServers"]["azure-calc"] = @{
-        command = $exePath
-    }
+    $cursorConfig["mcpServers"]["azure-calc"] = @{ command = $exePath }
     Set-Content -Path $cursorConfigFile -Value ($cursorConfig | ConvertTo-Json -Depth 10) -Encoding UTF8
     Write-Host "      Configured Cursor: $cursorConfigFile" -ForegroundColor Gray
-} else {
-    Write-Host "      Cursor directory not detected (skipping). You can configure it manually in Cursor Settings." -ForegroundColor Gray
+}
+
+# Windsurf
+$windsurfDir = Join-Path $env:USERPROFILE ".codeium\windsurf"
+$windsurfConfigFile = Join-Path $windsurfDir "mcp_config.json"
+if (Test-Path $windsurfDir) {
+    $wsConfig = @{ mcpServers = @{} }
+    if (Test-Path $windsurfConfigFile) {
+        try {
+            $wraw = Get-Content -Path $windsurfConfigFile -Raw -Encoding UTF8
+            if ($wraw.Trim().Length -gt 0) {
+                $wsConfig = $wraw | ConvertFrom-Json -AsHashtable
+                if (-not $wsConfig.ContainsKey("mcpServers") -or ($null -eq $wsConfig["mcpServers"])) {
+                    $wsConfig["mcpServers"] = @{}
+                }
+            }
+        } catch { $wsConfig = @{ mcpServers = @{} } }
+    }
+    $wsConfig["mcpServers"]["azure-calc"] = @{ command = $exePath }
+    Set-Content -Path $windsurfConfigFile -Value ($wsConfig | ConvertTo-Json -Depth 10) -Encoding UTF8
+    Write-Host "      Configured Windsurf: $windsurfConfigFile" -ForegroundColor Gray
+}
+
+# VS Code Cline / Roo Code
+$extensions = @(
+    @{ Name = "Cline"; Path = Join-Path $env:APPDATA "Code\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json" },
+    @{ Name = "Roo Code"; Path = Join-Path $env:APPDATA "Code\User\globalStorage\rooveterinaryinc.roo-cline\settings\cline_mcp_settings.json" }
+)
+
+foreach ($ext in $extensions) {
+    $extDir = Split-Path $ext.Path -Parent
+    if (Test-Path $extDir) {
+        $extConfig = @{ mcpServers = @{} }
+        if (Test-Path $ext.Path) {
+            try {
+                $eraw = Get-Content -Path $ext.Path -Raw -Encoding UTF8
+                if ($eraw.Trim().Length -gt 0) {
+                    $extConfig = $eraw | ConvertFrom-Json -AsHashtable
+                    if (-not $extConfig.ContainsKey("mcpServers") -or ($null -eq $extConfig["mcpServers"])) {
+                        $extConfig["mcpServers"] = @{}
+                    }
+                }
+            } catch { $extConfig = @{ mcpServers = @{} } }
+        }
+        $extConfig["mcpServers"]["azure-calc"] = @{ command = $exePath }
+        Set-Content -Path $ext.Path -Value ($extConfig | ConvertTo-Json -Depth 10) -Encoding UTF8
+        Write-Host "      Configured $($ext.Name): $($ext.Path)" -ForegroundColor Gray
+    }
 }
 
 Write-Host ""
@@ -141,5 +184,7 @@ Write-Host "==========================================================" -Foregro
 Write-Host "  Binary Location:  $exePath"
 Write-Host "  Claude Config:    $claudeConfigFile"
 Write-Host ""
-Write-Host "  Next steps: Restart Claude Desktop or Cursor to activate." -ForegroundColor Yellow
+Write-Host "  Compatible with: Claude Desktop, Cursor, Windsurf, VS Code (Copilot/Cline/Roo Code), Claude Code, and any MCP client." -ForegroundColor Cyan
+Write-Host "  Restart your AI tool to start using." -ForegroundColor Yellow
 Write-Host "==========================================================" -ForegroundColor Green
+

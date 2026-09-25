@@ -1,6 +1,6 @@
 {
   "name": "azure-calc-mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "High-performance Model Context Protocol (MCP) server for Microsoft Azure Pricing Calculator",
   "main": "bin/index.js",
   "bin": {

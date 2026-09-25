@@ -68,42 +68,73 @@ if (-not (Test-Path $exePath)) {
 }
 Write-Host "      Installed to: $exePath" -ForegroundColor Gray
 
-# 4. Auto-Configure Claude Desktop
-Write-Host "[3/4] Configuring Claude Desktop..." -ForegroundColor Green
-$claudeConfigDir = Join-Path $env:APPDATA "Claude"
-$claudeConfigFile = Join-Path $claudeConfigDir "claude_desktop_config.json"
+# 4. Auto-Configure Claude Desktop (Win32 + Microsoft Store) and Claude CLI
+Write-Host "[3/4] Configuring Claude Desktop & Claude CLI..." -ForegroundColor Green
 
-if (-not (Test-Path $claudeConfigDir)) {
-    New-Item -ItemType Directory -Path $claudeConfigDir -Force | Out-Null
-}
+$claudeConfigFiles = @(
+    (Join-Path $env:APPDATA "Claude\claude_desktop_config.json")
+)
 
-$claudeConfig = @{
-    mcpServers = @{}
-}
-
-if (Test-Path $claudeConfigFile) {
-    try {
-        $raw = Get-Content -Path $claudeConfigFile -Raw -Encoding UTF8
-        if ($raw.Trim().Length -gt 0) {
-            $claudeConfig = $raw | ConvertFrom-Json -AsHashtable
-            if (-not $claudeConfig.ContainsKey("mcpServers") -or ($null -eq $claudeConfig["mcpServers"])) {
-                $claudeConfig["mcpServers"] = @{}
-            }
-        }
-    } catch {
-        Write-Warning "Could not parse existing claude_desktop_config.json, backing up to .bak"
-        Copy-Item $claudeConfigFile "$claudeConfigFile.bak" -Force
-        $claudeConfig = @{ mcpServers = @{} }
+# Detect Microsoft Store / MSIX installation
+$storeMatches = Get-ChildItem -Path "$env:LOCALAPPDATA\Packages" -Filter "Claude_*" -ErrorAction SilentlyContinue
+foreach ($sm in $storeMatches) {
+    $storeConfig = Join-Path $sm.FullName "LocalCache\Roaming\Claude\claude_desktop_config.json"
+    if (Test-Path (Split-Path $storeConfig -Parent)) {
+        $claudeConfigFiles += $storeConfig
     }
 }
 
-$claudeConfig["mcpServers"]["azure-calc"] = @{
-    command = $exePath
+foreach ($cFile in $claudeConfigFiles) {
+    $cDir = Split-Path $cFile -Parent
+    if (-not (Test-Path $cDir)) {
+        New-Item -ItemType Directory -Path $cDir -Force | Out-Null
+    }
+
+    $cConfig = @{ mcpServers = @{} }
+    if (Test-Path $cFile) {
+        try {
+            $raw = Get-Content -Path $cFile -Raw -Encoding UTF8
+            if ($raw.Trim().Length -gt 0) {
+                $cConfig = $raw | ConvertFrom-Json -AsHashtable
+                if (-not $cConfig.ContainsKey("mcpServers") -or ($null -eq $cConfig["mcpServers"])) {
+                    $cConfig["mcpServers"] = @{}
+                }
+            }
+        } catch {
+            Copy-Item $cFile "$cFile.bak" -Force
+            $cConfig = @{ mcpServers = @{} }
+        }
+    }
+
+    $cConfig["mcpServers"]["azure-calc"] = @{
+        command = $exePath
+    }
+
+    Set-Content -Path $cFile -Value ($cConfig | ConvertTo-Json -Depth 10) -Encoding UTF8
+    Write-Host "      Configured Claude Desktop: $cFile" -ForegroundColor Gray
 }
 
-$jsonOut = $claudeConfig | ConvertTo-Json -Depth 10
-Set-Content -Path $claudeConfigFile -Value $jsonOut -Encoding UTF8
-Write-Host "      Configured: $claudeConfigFile" -ForegroundColor Gray
+# Claude CLI (~/.claude.json)
+$claudeCLIFile = Join-Path $env:USERPROFILE ".claude.json"
+if (Test-Path $claudeCLIFile) {
+    try {
+        $raw = Get-Content -Path $claudeCLIFile -Raw -Encoding UTF8
+        if ($raw.Trim().Length -gt 0) {
+            $cliConfig = $raw | ConvertFrom-Json -AsHashtable
+            if (-not $cliConfig.ContainsKey("mcpServers") -or ($null -eq $cliConfig["mcpServers"])) {
+                $cliConfig["mcpServers"] = @{}
+            }
+            $cliConfig["mcpServers"]["azure-calc"] = @{
+                type = "stdio"
+                command = $exePath
+            }
+            Set-Content -Path $claudeCLIFile -Value ($cliConfig | ConvertTo-Json -Depth 10) -Encoding UTF8
+            Write-Host "      Configured Claude CLI: $claudeCLIFile" -ForegroundColor Gray
+        }
+    } catch {
+        Write-Warning "Could not update ~/.claude.json automatically"
+    }
+}
 
 # 5. Auto-Configure Other MCP Clients (Cursor, Windsurf, Cline, Roo Code)
 Write-Host "[4/4] Checking other AI clients (Cursor, Windsurf, VS Code Cline/Roo Code)..." -ForegroundColor Green

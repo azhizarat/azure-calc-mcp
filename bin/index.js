@@ -122,15 +122,35 @@ async function ensureBinary() {
 }
 
 // 5. Config Helper for Claude Desktop & Cursor
-function getClaudeConfigPath() {
+function getClaudeDesktopConfigPaths() {
   const platform = os.platform();
+  const paths = [];
   if (platform === 'win32') {
-    return path.join(process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming'), 'Claude', 'claude_desktop_config.json');
+    // Win32 Roaming
+    paths.push(path.join(process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming'), 'Claude', 'claude_desktop_config.json'));
+    // Windows Store / MSIX package
+    const localPackages = path.join(process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local'), 'Packages');
+    if (fs.existsSync(localPackages)) {
+      try {
+        const matches = fs.readdirSync(localPackages).filter(d => d.startsWith('Claude_'));
+        for (const m of matches) {
+          const storeConfig = path.join(localPackages, m, 'LocalCache', 'Roaming', 'Claude', 'claude_desktop_config.json');
+          if (fs.existsSync(path.dirname(storeConfig))) {
+            paths.push(storeConfig);
+          }
+        }
+      } catch (e) {}
+    }
   } else if (platform === 'darwin') {
-    return path.join(os.homedir(), 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json');
+    paths.push(path.join(os.homedir(), 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json'));
   } else {
-    return path.join(os.homedir(), '.config', 'Claude', 'claude_desktop_config.json');
+    paths.push(path.join(os.homedir(), '.config', 'Claude', 'claude_desktop_config.json'));
   }
+  return paths;
+}
+
+function getClaudeCLIConfigPath() {
+  return path.join(os.homedir(), '.claude.json');
 }
 
 function getCursorConfigPath() {
@@ -163,14 +183,21 @@ async function runInstaller() {
   console.log('==========================================================');
 
   const binaryPath = await ensureBinary();
-  console.log(`[1/3] Native binary installed: ${binaryPath}`);
+  console.log(`[1/4] Native binary installed: ${binaryPath}`);
 
-  // Claude Desktop
-  const claudePath = getClaudeConfigPath();
-  updateConfigFile(claudePath, {
-    command: binaryPath
-  });
-  console.log(`[2/3] Claude Desktop configured: ${claudePath}`);
+  // Claude Desktop (Win32 + Microsoft Store)
+  const claudePaths = getClaudeDesktopConfigPaths();
+  for (const cp of claudePaths) {
+    updateConfigFile(cp, { type: 'stdio', command: binaryPath });
+    console.log(`[2/4] Claude Desktop configured: ${cp}`);
+  }
+
+  // Claude CLI (~/.claude.json)
+  const cliPath = getClaudeCLIConfigPath();
+  if (fs.existsSync(cliPath)) {
+    updateConfigFile(cliPath, { type: 'stdio', command: binaryPath });
+    console.log(`[3/4] Claude CLI configured: ${cliPath}`);
+  }
 
   // Cursor
   const cursorDir = path.dirname(getCursorConfigPath());

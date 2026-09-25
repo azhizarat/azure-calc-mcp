@@ -28,35 +28,51 @@ func runSelfInstall() {
 		targetAbs, _ := filepath.Abs(targetExe)
 		if currentAbs != targetAbs {
 			if err := copyFile(currentAbs, targetAbs); err == nil {
-				fmt.Printf("[1/3] Binario instalado em: %s\n", targetAbs)
+				fmt.Printf("[1/4] Binario instalado em: %s\n", targetAbs)
 			} else {
-				fmt.Printf("[1/3] Usando binario em: %s\n", currentAbs)
+				fmt.Printf("[1/4] Usando binario em: %s\n", currentAbs)
 				targetExe = currentAbs
 			}
 		} else {
-			fmt.Printf("[1/3] Binario ja esta no caminho de instalacao: %s\n", targetAbs)
+			fmt.Printf("[1/4] Binario ja esta no caminho de instalacao: %s\n", targetAbs)
 		}
 	}
 
-	// Claude Desktop
-	claudePath := getClaudeConfigPath()
-	if err := updateMCPConfig(claudePath, targetExe); err == nil {
-		fmt.Printf("[2/3] Claude Desktop configurado com sucesso: %s\n", claudePath)
-	} else {
-		fmt.Printf("[2/3] Aviso ao configurar Claude Desktop: %v\n", err)
+	// 1. Claude Desktop (Traditional + Windows Store / MSIX)
+	claudePaths := getClaudeDesktopConfigPaths()
+	configuredClaude := false
+	for _, p := range claudePaths {
+		if err := updateMCPConfig(p, targetExe); err == nil {
+			fmt.Printf("[2/4] Claude Desktop configurado com sucesso: %s\n", p)
+			configuredClaude = true
+		}
+	}
+	if !configuredClaude && len(claudePaths) > 0 {
+		_ = updateMCPConfig(claudePaths[0], targetExe)
+		fmt.Printf("[2/4] Claude Desktop configurado: %s\n", claudePaths[0])
 	}
 
-	// Cursor
+	// 2. Claude CLI (~/.claude.json)
+	claudeCLIPath := getClaudeCLIConfigPath()
+	if _, err := os.Stat(claudeCLIPath); err == nil {
+		if err := updateMCPConfig(claudeCLIPath, targetExe); err == nil {
+			fmt.Printf("[3/4] Claude CLI configurado com sucesso: %s\n", claudeCLIPath)
+		}
+	} else {
+		fmt.Println("[3/4] Claude CLI (~/.claude.json) nao encontrado.")
+	}
+
+	// 3. Cursor
 	cursorPath := getCursorConfigPath()
 	if _, err := os.Stat(filepath.Dir(cursorPath)); err == nil {
 		if err := updateMCPConfig(cursorPath, targetExe); err == nil {
-			fmt.Printf("[3/3] Cursor configurado com sucesso: %s\n", cursorPath)
+			fmt.Printf("[4/4] Cursor configurado com sucesso: %s\n", cursorPath)
 		}
 	} else {
-		fmt.Println("[3/3] Pasta do Cursor nao encontrada (pode configurar manualmente nas Settings).")
+		fmt.Println("[4/4] Pasta do Cursor nao encontrada (pode configurar manualmente nas Settings).")
 	}
 
-	// Windsurf
+	// 4. Windsurf
 	windsurfPath := getWindsurfConfigPath()
 	if _, err := os.Stat(filepath.Dir(windsurfPath)); err == nil {
 		if err := updateMCPConfig(windsurfPath, targetExe); err == nil {
@@ -64,7 +80,7 @@ func runSelfInstall() {
 		}
 	}
 
-	// VS Code Cline & Roo Code
+	// 5. VS Code Cline & Roo Code
 	for _, extPath := range getVSCodeExtensionPaths() {
 		if _, err := os.Stat(filepath.Dir(extPath)); err == nil {
 			if err := updateMCPConfig(extPath, targetExe); err == nil {
@@ -76,7 +92,7 @@ func runSelfInstall() {
 	fmt.Println("")
 	fmt.Println("==========================================================")
 	fmt.Println("  Instalacao concluida com sucesso!")
-	fmt.Println("  Reinicie o Claude Desktop, Cursor ou seu assistente de IA.")
+	fmt.Println("  Reinicie o Claude Desktop, Claude CLI, Cursor ou Windsurf.")
 	fmt.Println("==========================================================")
 }
 
@@ -99,19 +115,42 @@ func getBinaryName() string {
 	return "azure-calc-mcp"
 }
 
-func getClaudeConfigPath() string {
+func getClaudeDesktopConfigPaths() []string {
+	var paths []string
 	if runtime.GOOS == "windows" {
+		// Standard Win32 roaming path
 		appData := os.Getenv("APPDATA")
 		if appData == "" {
 			appData = filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Roaming")
 		}
-		return filepath.Join(appData, "Claude", "claude_desktop_config.json")
+		standardPath := filepath.Join(appData, "Claude", "claude_desktop_config.json")
+		paths = append(paths, standardPath)
+
+		// Microsoft Store / MSIX virtualized package path
+		localApp := os.Getenv("LOCALAPPDATA")
+		if localApp == "" {
+			localApp = filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local")
+		}
+		pattern := filepath.Join(localApp, "Packages", "Claude_*", "LocalCache", "Roaming", "Claude", "claude_desktop_config.json")
+		if matches, err := filepath.Glob(pattern); err == nil && len(matches) > 0 {
+			paths = append(paths, matches...)
+		}
 	} else if runtime.GOOS == "darwin" {
 		home := os.Getenv("HOME")
-		return filepath.Join(home, "Library", "Application Support", "Claude", "claude_desktop_config.json")
+		paths = append(paths, filepath.Join(home, "Library", "Application Support", "Claude", "claude_desktop_config.json"))
+	} else {
+		home := os.Getenv("HOME")
+		paths = append(paths, filepath.Join(home, ".config", "Claude", "claude_desktop_config.json"))
 	}
-	home := os.Getenv("HOME")
-	return filepath.Join(home, ".config", "Claude", "claude_desktop_config.json")
+	return paths
+}
+
+func getClaudeCLIConfigPath() string {
+	home := os.Getenv("USERPROFILE")
+	if home == "" {
+		home = os.Getenv("HOME")
+	}
+	return filepath.Join(home, ".claude.json")
 }
 
 func getCursorConfigPath() string {
@@ -161,6 +200,7 @@ func updateMCPConfig(filePath, targetExe string) error {
 	}
 
 	servers["azure-calc"] = map[string]interface{}{
+		"type":    "stdio",
 		"command": targetExe,
 	}
 	config["mcpServers"] = servers

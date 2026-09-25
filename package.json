@@ -1,0 +1,34 @@
+{
+  "name": "azure-calc-mcp",
+  "version": "1.0.0",
+  "description": "High-performance Model Context Protocol (MCP) server for Microsoft Azure Pricing Calculator",
+  "main": "bin/index.js",
+  "bin": {
+    "azure-calc-mcp": "./bin/index.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "scripts": {
+    "start": "node ./bin/index.js",
+    "install-mcp": "node ./bin/index.js install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kandiesky/azure-calc-mcp.git"
+  },
+  "keywords": [
+    "mcp",
+    "azure",
+    "model-context-protocol",
+    "azure-pricing-calculator",
+    "pricing",
+    "claude",
+    "cursor"
+  ],
+  "author": "kandiesky",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

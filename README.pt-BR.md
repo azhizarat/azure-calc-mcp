@@ -71,10 +71,51 @@ sequenceDiagram
 
 ## Instalação e Configuração
 
-### 1. Claude Desktop
-Adicione o servidor no arquivo de configuração do Claude Desktop:
+### Método 1: Instalador Automático de Linha Única (Recomendado)
+
+Execute um único comando no terminal. Ele baixa o binário nativo para a sua arquitetura, instala na pasta local do usuário e configura o Claude Desktop e o Cursor automaticamente.
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/kandiesky/azure-calc-mcp/main/install.ps1 | iex
+```
+
+**macOS / Linux (Bash):**
+```bash
+curl -fsSL https://raw.githubusercontent.com/kandiesky/azure-calc-mcp/main/install.sh | bash
+```
+
+---
+
+### Método 2: Instalador & Executor via NPX
+
+Se você possui Node.js instalado na máquina, pode configurar tudo de forma automatizada com:
+```bash
+npx azure-calc-mcp install
+```
+
+Ou configurar o Claude Desktop diretamente com `npx` sem baixar binários manualmente:
+```json
+{
+  "mcpServers": {
+    "azure-calc": {
+      "command": "npx",
+      "args": ["-y", "azure-calc-mcp"]
+    }
+  }
+}
+```
+
+---
+
+### Método 3: Configuração Manual (Binário Pré-compilado)
+
+Baixe o executável correspondente ao seu sistema operacional nas [Releases do GitHub](https://github.com/kandiesky/azure-calc-mcp/releases) e configure o seu assistente:
+
+**Claude Desktop:**
 - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Linux:** `~/.config/Claude/claude_desktop_config.json`
 
 ```json
 {
@@ -86,13 +127,15 @@ Adicione o servidor no arquivo de configuração do Claude Desktop:
 }
 ```
 
-### 2. Cursor / Codex
+**Cursor / Codex:**
 Nas configurações do Cursor -> **Features** -> **MCP Servers** -> **Add New MCP Server**:
 - **Name:** `azure-calc`
 - **Type:** `command`
 - **Command:** `C:\caminho\para\azure-calc-mcp.exe`
 
-### 3. Compilar a partir do Código Fonte
+---
+
+### Método 4: Compilar a partir do Código Fonte
 ```bash
 git clone https://github.com/kandiesky/azure-calc-mcp.git
 cd azure-calc-mcp

@@ -71,10 +71,51 @@ sequenceDiagram
 
 ## Quick Start & Installation
 
-### 1. Claude Desktop
-Add the server to your Claude Desktop configuration file:
+### Method 1: One-Line Auto-Installer (Recommended)
+
+Run a single command in your terminal. It downloads the native binary, installs it to your local application directory, and automatically configures Claude Desktop and Cursor.
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/kandiesky/azure-calc-mcp/main/install.ps1 | iex
+```
+
+**macOS / Linux (Bash):**
+```bash
+curl -fsSL https://raw.githubusercontent.com/kandiesky/azure-calc-mcp/main/install.sh | bash
+```
+
+---
+
+### Method 2: NPX Auto-Installer & Runner
+
+If you have Node.js installed, you can configure everything automatically with:
+```bash
+npx azure-calc-mcp install
+```
+
+Or configure Claude Desktop directly using `npx` without manual downloads:
+```json
+{
+  "mcpServers": {
+    "azure-calc": {
+      "command": "npx",
+      "args": ["-y", "azure-calc-mcp"]
+    }
+  }
+}
+```
+
+---
+
+### Method 3: Manual Configuration (Precompiled Binary)
+
+Download the binary from [GitHub Releases](https://github.com/kandiesky/azure-calc-mcp/releases) and add it to your AI tool configuration:
+
+**Claude Desktop:**
 - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Linux:** `~/.config/Claude/claude_desktop_config.json`
 
 ```json
 {
@@ -86,13 +127,15 @@ Add the server to your Claude Desktop configuration file:
 }
 ```
 
-### 2. Cursor / Codex
+**Cursor / Codex:**
 In Cursor Settings -> **Features** -> **MCP Servers** -> **Add New MCP Server**:
 - **Name:** `azure-calc`
 - **Type:** `command`
 - **Command:** `C:\path\to\azure-calc-mcp.exe`
 
-### 3. Build from Source
+---
+
+### Method 4: Build from Source
 ```bash
 git clone https://github.com/kandiesky/azure-calc-mcp.git
 cd azure-calc-mcp

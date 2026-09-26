@@ -1,9 +1,12 @@
-# Binaries and object files (optional, un-comment to exclude compiled binaries)
-# *.exe
-# *.exe~
-# *.dll
-# *.so
-# *.dylib
+# Binaries and object files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+azure-calc-mcp
+dist/
+bin/azure-calc-mcp*
 
 # Test binary, built with `go test -c`
 *.test
